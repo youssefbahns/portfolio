@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Youssef Mohamed — Thumbnail Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a0c;
+    --surface: #141317;
+    --surface-2: #1c1b20;
+    --text: #f5f4f0;
+    --text-dim: #97959c;
+    --yellow: #ffd400;
+    --red: #ff3d2e;
+    --card-radius: 6px;
+    --border-soft: rgba(255,255,255,0.06);
+    --border-med: rgba(255,255,255,0.14);
+    --nav-bg: rgba(10,10,12,0.85);
+    --panel-bg: rgba(10,10,12,0.92);
+    --ph-color: rgba(255,255,255,0.14);
+  }
+  body.light{
+    --bg: #faf9f6;
+    --surface: #ffffff;
+    --surface-2: #efece4;
+    --text: #14131a;
+    --text-dim: #6b6870;
+    --border-soft: rgba(10,10,12,0.08);
+    --border-med: rgba(10,10,12,0.14);
+    --nav-bg: rgba(250,249,246,0.85);
+    --panel-bg: rgba(250,249,246,0.92);
+    --ph-color: rgba(10,10,12,0.14);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; overflow-x:hidden;
+    transition: background-color .4s ease, color .4s ease; }
+  ::selection{ background:var(--yellow); color:#0a0a0c; }
+  a{ color:inherit; }
+
+  body[dir="rtl"]{ font-family:'Tajawal',sans-serif; }
+  body[dir="rtl"] .hero h1, body[dir="rtl"] .logo, body[dir="rtl"] .admin-title,
+  body[dir="rtl"] .f-left, body[dir="rtl"] .ph-num{ font-family:'Tajawal',sans-serif; font-weight:900; letter-spacing:0; }
+
+  nav, footer, .card, .btn-ghost, .admin-link, .img-slot, .field input, .field textarea,
+  .admin-header, .save-bar, .modal-card{
+    transition: background-color .35s ease, color .35s ease, border-color .35s ease;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{ display:flex; justify-content:space-between; align-items:center; padding:28px 6vw; position:sticky; top:0; z-index:50;
+    background:var(--nav-bg); backdrop-filter:blur(10px); border-bottom:1px solid var(--border-soft); }
+  .logo{ font-family:'Anton',sans-serif; font-size:20px; letter-spacing:0.5px; text-transform:uppercase; }
+  .logo span{ color:var(--yellow); }
+  .nav-right{ display:flex; align-items:center; gap:12px; }
+  .role-tag{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); letter-spacing:0.5px; display:flex; align-items:center; gap:8px; }
+  .dot{ width:7px; height:7px; border-radius:50%; background:#3ddc84; box-shadow:0 0 8px #3ddc84; animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .admin-link{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.5px; text-decoration:none; color:var(--text-dim);
+    border:1px solid var(--border-med); padding:8px 14px; border-radius:100px; transition:all .18s ease; cursor:pointer; background:none; }
+  .admin-link:hover{ border-color:var(--yellow); color:var(--yellow); }
+  .admin-link:disabled{ opacity:.4; cursor:not-allowed; }
+  #theme-icon{ display:inline-block; transition:transform .5s ease; }
+
+  /* ---------- HERO ---------- */
+  .hero{ position:relative; padding:14vh 6vw 12vh; max-width:1100px; }
+  .hero h1{ font-family:'Anton',sans-serif; font-size:clamp(42px, 8vw, 92px); line-height:1.05; text-transform:uppercase; letter-spacing:-1px; }
+  .hero h1 .hl{ position:relative; display:inline-block; color:var(--bg); background:var(--yellow); padding:0 14px; transform:rotate(-1.5deg); margin:4px 0; }
+  .hero p{ margin-top:28px; max-width:520px; font-size:17px; line-height:1.6; color:var(--text-dim); }
+  .cta-row{ margin-top:44px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  .btn{ font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; text-decoration:none; padding:14px 26px; border-radius:100px;
+    display:inline-flex; align-items:center; gap:8px; transition:transform .18s ease, background .18s ease; border:none; cursor:pointer; }
+  .btn-primary{ background:var(--yellow); color:#0a0a0c; }
+  .btn-primary:hover{ transform:translateY(-2px); }
+  .btn-ghost{ color:var(--text-dim); border:1px solid var(--border-med); background:none; }
+  .btn-ghost:hover{ border-color:var(--yellow); color:var(--yellow); }
+
+  /* ---------- SECTION LABEL ---------- */
+  .section-label{ padding:0 6vw; display:flex; align-items:center; gap:14px; margin-bottom:38px; }
+  .section-label span{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; white-space:nowrap; }
+  .section-label .line{ height:1px; width:100%; background:var(--border-med); }
+
+  /* ---------- GRID ---------- */
+  .grid-wrap{ padding:6vh 6vw 14vh; }
+  .grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; }
+  .card{ position:relative; aspect-ratio:16/9; border-radius:var(--card-radius); overflow:hidden; background:var(--surface);
+    border:1px solid var(--border-soft); cursor:default; opacity:0; transform:translateY(16px); animation:rise .6s ease forwards; }
+  .card.clickable{ cursor:pointer; }
+  .card img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .45s ease; }
+  .card:hover img{ transform:scale(1.06); }
+  .card.placeholder{ display:flex; align-items:center; justify-content:center;
+    background:repeating-linear-gradient(135deg, var(--surface-2) 0 10px, var(--surface) 10px 20px); }
+  .card.placeholder .ph-label{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); text-align:center; padding:0 20px; }
+  .card.placeholder .ph-num{ font-family:'Anton',sans-serif; font-size:34px; color:var(--ph-color); display:block; margin-bottom:4px; }
+  .card-tag{ position:absolute; bottom:10px; left:10px; font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(10,10,12,0.75);
+    color:#f5f4f0; backdrop-filter:blur(4px); padding:5px 10px; border-radius:100px; opacity:0; transform:translateY(6px); transition:all .25s ease; }
+  .card:hover .card-tag{ opacity:1; transform:translateY(0); }
+  @keyframes rise{ to{ opacity:1; transform:translateY(0); } }
+
+  @media (max-width:900px){ .grid{ grid-template-columns:repeat(2, 1fr); } }
+  @media (max-width:560px){ .grid{ grid-template-columns:1fr; } nav{ padding:22px 5vw; flex-wrap:wrap; gap:14px; } .hero{ padding:10vh 5vw 8vh; } }
+
+  /* ---------- FOOTER ---------- */
+  footer{ padding:36px 6vw 46px; border-top:1px solid var(--border-soft); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
+  footer .f-left{ font-family:'Anton',sans-serif; font-size:15px; letter-spacing:0.4px; text-transform:uppercase; color:var(--text-dim); }
+  footer .f-right{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); }
+
+  a:focus-visible, .btn:focus-visible, .admin-link:focus-visible{ outline:2px solid var(--yellow); outline-offset:3px; }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  /* ---------- LIGHTBOX ---------- */
+  .lightbox{ position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:300; display:none; align-items:center; justify-content:center;
+    opacity:0; transition:opacity .3s ease; }
+  .lightbox.open{ display:flex; opacity:1; }
+  .lightbox img{ max-width:88vw; max-height:82vh; object-fit:contain; border-radius:6px; box-shadow:0 20px 60px rgba(0,0,0,0.5); animation:lb-in .35s ease; }
+  @keyframes lb-in{ from{ opacity:0; transform:scale(.96); } to{ opacity:1; transform:scale(1); } }
+  .lb-close, .lb-nav{ position:absolute; background:rgba(255,255,255,0.1); border:none; color:#fff; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:background .2s ease, transform .2s ease; }
+  .lb-close{ top:24px; right:28px; width:42px; height:42px; border-radius:50%; font-size:22px; }
+  .lb-close:hover{ background:rgba(255,255,255,0.22); transform:rotate(90deg); }
+  .lb-nav{ top:50%; transform:translateY(-50%); width:54px; height:54px; border-radius:50%; font-size:26px; }
+  .lb-nav:hover{ background:rgba(255,255,255,0.24); transform:translateY(-50%) scale(1.08); }
+  .lb-prev{ left:20px; } .lb-next{ right:20px; }
+  .lb-tag{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); font-family:'JetBrains Mono',monospace; font-size:12px;
+    color:#fff; background:rgba(255,255,255,0.12); padding:6px 16px; border-radius:100px; white-space:nowrap; }
+  .lb-count{ position:absolute; top:28px; left:28px; font-family:'JetBrains Mono',monospace; font-size:12px; color:rgba(255,255,255,0.6); }
+  @media (max-width:640px){
+    .lb-nav{ width:42px; height:42px; font-size:20px; } .lb-close{ width:34px; height:34px; top:16px; right:16px; }
+    .lb-prev{ left:8px; } .lb-next{ right:8px; } .lb-count{ top:18px; left:18px; }
+  }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); z-index:100; display:none; align-items:center; justify-content:center; }
+  .modal-card{ background:var(--surface); border:1px solid var(--border-med); border-radius:10px; padding:28px; width:320px; max-width:90vw; }
+  .modal-card h3{ font-family:'Anton',sans-serif; font-size:16px; text-transform:uppercase; margin-bottom:16px; letter-spacing:0.5px; }
+  .modal-card input{ width:100%; background:var(--surface-2); border:1px solid var(--border-soft); color:var(--text); padding:12px 14px;
+    border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:13px; margin-bottom:8px; }
+  .modal-card input:focus{ outline:none; border-color:var(--yellow); }
+   .modal-card input[type=email]{ width:100%; background:var(--surface-2); border:1px solid var(--border-soft); color:var(--text); padding:12px 14px; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:13px; margin-bottom:8px; }
+  .modal-card input:disabled{ opacity:.5; }
+  .pw-error{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--red); min-height:16px; margin-bottom:10px; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; }
+
+  /* ---------- ADMIN VIEW ---------- */
+  #admin-view{ display:none; min-height:100vh; padding:0 0 10vh; }
+  .admin-header{ display:flex; justify-content:space-between; align-items:center; padding:24px 6vw; border-bottom:1px solid var(--border-soft);
+    position:sticky; top:0; background:var(--nav-bg); backdrop-filter:blur(10px); z-index:50; }
+  .admin-title{ font-family:'Anton',sans-serif; font-size:18px; text-transform:uppercase; letter-spacing:0.5px; }
+  .admin-title span{ color:var(--yellow); }
+  .admin-body{ max-width:820px; margin:0 auto; padding:5vh 6vw 0; }
+
+  .lang-tabs{ display:flex; gap:8px; margin-bottom:34px; }
+  .lang-tab{ font-family:'JetBrains Mono',monospace; font-size:12px; padding:8px 18px; border-radius:100px; border:1px solid var(--border-med);
+    background:none; color:var(--text-dim); cursor:pointer; transition:all .18s ease; }
+  .lang-tab.active{ background:var(--yellow); color:#0a0a0c; border-color:var(--yellow); }
+
+  .a-section{ margin-bottom:44px; }
+  .a-section h3{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--yellow); margin-bottom:18px; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12px; color:var(--text-dim); margin-bottom:6px; font-family:'JetBrains Mono',monospace; }
+  .field input[type=text], .field input[type=url], .field textarea{ width:100%; background:var(--surface); border:1px solid var(--border-soft);
+    color:var(--text); padding:12px 14px; border-radius:6px; font-family:'Inter',sans-serif; font-size:14px; resize:vertical; }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--yellow); }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:640px){ .row2{ grid-template-columns:1fr; } }
+
+  .img-slot{ display:flex; gap:14px; align-items:center; background:var(--surface); border:1px solid var(--border-soft); padding:14px; border-radius:8px; margin-bottom:12px; }
+  .img-slot .thumb{ width:96px; height:54px; flex-shrink:0; border-radius:4px; overflow:hidden; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-family:'Anton',sans-serif; color:var(--ph-color); font-size:14px; }
+  .img-slot .thumb img{ width:100%; height:100%; object-fit:cover; }
+  .img-slot .slot-fields{ flex:1; display:flex; flex-direction:column; gap:8px; }
+  .upload-btn{ display:inline-flex; align-items:center; gap:8px; width:fit-content; font-family:'JetBrains Mono',monospace; font-size:11px;
+    color:var(--bg); background:var(--yellow); padding:8px 14px; border-radius:100px; cursor:pointer; transition:transform .15s ease, filter .15s ease; }
+  .upload-btn:hover{ transform:translateY(-1px); filter:brightness(1.05); }
+  .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; pointer-events:none; }
+  .img-slot input[type=text]{ width:100%; background:var(--surface-2); border:1px solid var(--border-soft); color:var(--text); padding:8px 10px; border-radius:5px; font-size:13px; }
+  .clear-btn{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--red); background:none; border:1px solid rgba(255,61,46,0.35); padding:6px 10px; border-radius:6px; cursor:pointer; white-space:nowrap; }
+  .clear-btn:hover{ background:rgba(255,61,46,0.1); }
+  #add-slot-btn{ margin-top:6px; }
+
+  .save-bar{ position:sticky; bottom:0; background:var(--panel-bg); backdrop-filter:blur(10px); border-top:1px solid var(--border-med);
+    padding:16px 6vw; display:flex; justify-content:space-between; align-items:center; max-width:820px; margin:40px auto 0; border-radius:10px 10px 0 0; gap:14px; flex-wrap:wrap; }
+  #save-status{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); }
+  #save-status.ok{ color:#3ddc84; }
+  #save-status.err{ color:var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ================= MAIN SITE ================= -->
+<div id="main-view">
+  <nav>
+    <div class="logo">YOUSSEF<span>.</span>M</div>
+    <div class="nav-right">
+      <div class="role-tag"><span class="dot"></span><span id="available-text">AVAILABLE FOR WORK</span></div>
+      <button class="admin-link" id="lang-toggle">عربي</button>
+      <button class="admin-link" id="theme-toggle"><span id="theme-icon">🌙</span></button>
+      <button class="admin-link" id="open-admin">Admin</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1 id="hero-h1"></h1>
+    <p id="hero-sub"></p>
+
+    <div class="cta-row">
+      <a href="#work" class="btn btn-primary" id="btn-view-work">View the work ↓</a>
+      <a href="#" class="btn btn-ghost" id="btn-hire-me">Hire me on Fiverr</a>
+    </div>
+  </section>
+
+  <div class="section-label" id="work">
+    <span id="work-label">Selected Work</span>
+    <div class="line"></div>
+  </div>
+
+  <div class="grid-wrap">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <footer>
+    <div class="f-left" id="footer-name">Youssef Mohamed — Thumbnail Designer</div>
+    <div class="f-right">© 2026</div>
+  </footer>
+</div>
+
+<!-- ================= LIGHTBOX ================= -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-count" id="lb-count"></div>
+  <button class="lb-close" id="lb-close">&times;</button>
+  <button class="lb-nav lb-prev" id="lb-prev">&#8249;</button>
+  <img id="lightbox-img" src="" alt="">
+  <button class="lb-nav lb-next" id="lb-next">&#8250;</button>
+  <div class="lb-tag" id="lightbox-tag"></div>
+</div>
+
+<!-- ================= ADMIN VIEW ================= -->
+<div id="admin-view">
+  <div class="admin-header">
+    <div class="admin-title">SITE<span>.</span>ADMIN</div>
+    <button class="admin-link" id="close-admin">← Back to site</button>
+  </div>
+
+  <div class="admin-body">
+    <div class="lang-tabs">
+      <button class="lang-tab active" data-lang="en">English</button>
+      <button class="lang-tab" data-lang="ar">العربي</button>
+    </div>
+
+    <div class="a-section">
+      <h3>Labels</h3>
+      <div class="row2">
+        <div class="field"><label>"Available" badge text</label><input type="text" id="f-avail"></div>
+        <div class="field"><label>"Selected Work" section title</label><input type="text" id="f-worklabel"></div>
+      </div>
+    </div>
+
+    <div class="a-section">
+      <h3>Hero text</h3>
+      <div class="field"><label>Line 1</label><input type="text" id="f-line1"></div>
+      <div class="field"><label>Line 2</label><input type="text" id="f-line2"></div>
+      <div class="field"><label>Highlighted line (yellow box)</label><input type="text" id="f-line3"></div>
+      <div class="field"><label>Subtitle</label><textarea id="f-sub" rows="3"></textarea></div>
+    </div>
+
+    <div class="a-section">
+      <h3>Buttons</h3>
+      <div class="row2">
+        <div class="field"><label>"View work" button text</label><input type="text" id="f-vw-text"></div>
+        <div class="field"><label>"View work" link (URL or #work)</label><input type="text" id="f-vw-url"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>"Hire me" button text</label><input type="text" id="f-hm-text"></div>
+        <div class="field"><label>"Hire me" link (URL)</label><input type="text" id="f-hm-url"></div>
+      </div>
+    </div>
+
+    <div class="a-section">
+      <h3>Footer name</h3>
+      <div class="field"><input type="text" id="f-footer"></div>
+    </div>
+
+    <div class="a-section">
+      <h3>Thumbnails — images are shared across languages, tags are per-language</h3>
+      <div id="img-slots"></div>
+      <button class="admin-link" id="add-slot-btn">+ Add image slot</button>
+    </div>
+  </div>
+
+  <div class="save-bar">
+    <span id="save-status">Unsaved changes are lost if you leave without saving.</span>
+    <button class="btn btn-primary" id="save-btn">Save changes</button>
+  </div>
+</div>
+
+<!-- ================= PASSWORD MODAL ================= -->
+<div class="modal-overlay" id="password-modal">
+  <div class="modal-card">
+    <h3>Admin Login</h3>
+    <input type="email" id="email-input" placeholder="Admin email" autocomplete="username">
+    <input type="password" id="pw-input" placeholder="Password" autocomplete="current-password">
+    <div class="pw-error" id="pw-error"></div>
+    <div class="modal-actions">
+      <button class="admin-link" id="pw-cancel">Cancel</button>
+      <button class="btn btn-primary" id="pw-submit">Enter</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://umsawfiwdtciicxxchrv.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_AKgnflr08lTaUx_7nWKFFA_RkTDnam1";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const CONTENT_ID = 1;
+const STORAGE_BUCKET = "portfolio-images";
+
+const STORAGE_KEY = 'site-content';
+
+const DEFAULTS = {
+  en: {
+    line1: 'Thumbnails that',
+    line2: 'make people',
+    line3: 'stop scrolling',
+    sub: "I'm Youssef Mohamed — I design high-CTR YouTube thumbnails for creators who want more clicks without more clutter.",
+    vwText: 'View the work ↓',
+    vwUrl: '#work',
+    hmText: 'Hire me on Fiverr',
+    hmUrl: '#',
+    footerName: 'Youssef Mohamed — Thumbnail Designer',
+    workLabel: 'Selected Work',
+    availableText: 'AVAILABLE FOR WORK'
+  },
+  ar: {
+    line1: 'تصاميم Thumbnails',
+    line2: 'بتخلي الناس',
+    line3: 'توقف السكرول',
+    sub: 'أنا يوسف محمد، بصمم Thumbnails بنسبة ضغط عالية لليوتيوبرز اللي عايزين مشاهدات أكتر من غير تعقيد.',
+    vwText: 'شوف الأعمال ↓',
+    vwUrl: '#work',
+    hmText: 'وظفني على Fiverr',
+    hmUrl: '#',
+    footerName: 'يوسف محمد — مصمم Thumbnails',
+    workLabel: 'أعمال مختارة',
+    availableText: 'متاح للعمل'
+  },
+  images: Array.from({length: 9}, () => ({ dataUrl: null, tag: { en:'', ar:'' } }))
+};
+
+let content = JSON.parse(JSON.stringify(DEFAULTS));
+let currentLang = 'en';
+let adminLang = 'en';
+let lockoutState = { attempts: 0, lockedUntil: 0 };
+let lockoutInterval = null;
+let isAdminAuthenticated = false;
+let lightboxImages = [];
+let lightboxIndex = 0;
+
+function deepMerge(base, saved){
+  const out = JSON.parse(JSON.stringify(base));
+  if(!saved) return out;
+  ['en','ar'].forEach(l => { if(saved[l]) out[l] = {...out[l], ...saved[l]}; });
+  if(Array.isArray(saved.images) && saved.images.length){
+    out.images = saved.images.map(s => ({
+      dataUrl: s && s.dataUrl ? s.dataUrl : null,
+      tag: { en: s?.tag?.en ?? '', ar: s?.tag?.ar ?? '' }
+    }));
+  }
+  return out;
+}
+
+async function loadContent(){
+  try{
+    const { data, error } = await supabase
+      .from('site_content')
+      .select('content')
+      .eq('id', CONTENT_ID)
+      .maybeSingle();
+
+    if(error) throw error;
+    if(data && data.content){ content = deepMerge(DEFAULTS, data.content); }
+  }catch(e){
+    console.error('Could not load site content:', e);
+  }
+
+  const { data: { session } } = await supabase.auth.getSession();
+  isAdminAuthenticated = !!session;
+  renderMain();
+  renderAdminForm();
+}
+
+function renderMain(){
+  const L = content[currentLang];
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+  document.getElementById('hero-h1').innerHTML = `${L.line1}<br>${L.line2}<br><span class="hl">${L.line3}</span>`;
+  document.getElementById('hero-sub').textContent = L.sub;
+  document.getElementById('available-text').textContent = L.availableText;
+  document.getElementById('work-label').textContent = L.workLabel;
+
+  const vw = document.getElementById('btn-view-work');
+  vw.textContent = L.vwText; vw.href = L.vwUrl;
+  const hm = document.getElementById('btn-hire-me');
+  hm.textContent = L.hmText; hm.href = L.hmUrl;
+
+  document.getElementById('footer-name').textContent = L.footerName;
+  document.getElementById('lang-toggle').textContent = currentLang === 'en' ? 'عربي' : 'English';
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  lightboxImages = [];
+  const emptyLabel = currentLang === 'ar' ? 'خانة تصميم' : 'Thumbnail slot';
+
+  content.images.forEach((slot, i) => {
+    const card = document.createElement('div');
+    card.style.animationDelay = `${Math.min(i,10) * 0.06}s`;
+    const tag = slot.tag ? slot.tag[currentLang] : '';
+    if(slot.dataUrl){
+      card.className = 'card clickable';
+      card.innerHTML = `<img src="${slot.dataUrl}" alt="Thumbnail ${i+1}">` + (tag ? `<div class="card-tag">${tag}</div>` : '');
+      const lbIdx = lightboxImages.length;
+      lightboxImages.push({ dataUrl: slot.dataUrl, tag: slot.tag });
+      card.addEventListener('click', () => openLightbox(lbIdx));
+    } else {
+      card.className = 'card placeholder';
+      card.innerHTML = `<div class="ph-label"><span class="ph-num">${String(i+1).padStart(2,'0')}</span>${emptyLabel}</div>`;
+    }
+    grid.appendChild(card);
+  });
+}
+
+/* ---------- LIGHTBOX ---------- */
+function openLightbox(idx){
+  lightboxIndex = idx;
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('open');
+}
+function updateLightbox(){
+  const item = lightboxImages[lightboxIndex];
+  if(!item) return;
+  document.getElementById('lightbox-img').src = item.dataUrl;
+  document.getElementById('lightbox-tag').textContent = item.tag ? (item.tag[currentLang] || '') : '';
+  document.getElementById('lb-count').textContent = `${lightboxIndex+1} / ${lightboxImages.length}`;
+  const multi = lightboxImages.length > 1;
+  document.getElementById('lb-prev').style.display = multi ? 'flex' : 'none';
+  document.getElementById('lb-next').style.display = multi ? 'flex' : 'none';
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
+function nextImage(){ lightboxIndex = (lightboxIndex + 1) % lightboxImages.length; updateLightbox(); }
+function prevImage(){ lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length; updateLightbox(); }
+
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lb-next').addEventListener('click', nextImage);
+document.getElementById('lb-prev').addEventListener('click', prevImage);
+document.getElementById('lightbox').addEventListener('click', (e) => { if(e.target.id === 'lightbox') closeLightbox(); });
+document.addEventListener('keydown', (e) => {
+  if(!document.getElementById('lightbox').classList.contains('open')) return;
+  if(e.key === 'Escape') closeLightbox();
+  if(e.key === 'ArrowRight') nextImage();
+  if(e.key === 'ArrowLeft') prevImage();
+});
+
+/* ---------- ADMIN FORM ---------- */
+function renderAdminForm(){
+  const L = content[adminLang];
+  document.getElementById('f-avail').value = L.availableText;
+  document.getElementById('f-worklabel').value = L.workLabel;
+  document.getElementById('f-line1').value = L.line1;
+  document.getElementById('f-line2').value = L.line2;
+  document.getElementById('f-line3').value = L.line3;
+  document.getElementById('f-sub').value = L.sub;
+  document.getElementById('f-vw-text').value = L.vwText;
+  document.getElementById('f-vw-url').value = L.vwUrl;
+  document.getElementById('f-hm-text').value = L.hmText;
+  document.getElementById('f-hm-url').value = L.hmUrl;
+  document.getElementById('f-footer').value = L.footerName;
+
+  const wrap = document.getElementById('img-slots');
+  wrap.innerHTML = '';
+  content.images.forEach((slot, i) => {
+    const row = document.createElement('div');
+    row.className = 'img-slot';
+    row.innerHTML = `
+      <div class="thumb" id="thumb-${i}">${slot.dataUrl ? `<img src="${slot.dataUrl}">` : (i+1)}</div>
+      <div class="slot-fields">
+        <label class="upload-btn" for="file-input-${i}">⤴ Upload image</label>
+        <input type="file" accept="image/*" id="file-input-${i}" data-idx="${i}" class="file-input visually-hidden">
+        <input type="text" placeholder="Tag shown on hover (this language)" value="${slot.tag[adminLang] || ''}" data-idx="${i}" class="tag-input">
+      </div>
+      <button class="clear-btn" data-idx="${i}">Remove slot</button>
+    `;
+    wrap.appendChild(row);
+  });
+
+  wrap.querySelectorAll('.file-input').forEach(inp => inp.addEventListener('change', e => handleFile(e, parseInt(e.target.dataset.idx))));
+  wrap.querySelectorAll('.tag-input').forEach(inp => inp.addEventListener('input', e => {
+    content.images[parseInt(e.target.dataset.idx)].tag[adminLang] = e.target.value;
+  }));
+  wrap.querySelectorAll('.clear-btn').forEach(btn => btn.addEventListener('click', e => {
+    const idx = parseInt(e.target.dataset.idx);
+    content.images.splice(idx, 1);
+    renderAdminForm();
+  }));
+}
+
+document.getElementById('add-slot-btn').addEventListener('click', () => {
+  content.images.push({ dataUrl: null, tag: { en:'', ar:'' } });
+  renderAdminForm();
+});
+
+async function handleFile(e, idx){
+  const file = e.target.files[0];
+  if(!file) return;
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if(!session){
+    document.getElementById('save-status').textContent = 'Please log in again to upload images.';
+    document.getElementById('save-status').className = 'err';
+    return;
+  }
+
+  const statusEl = document.getElementById('save-status');
+  statusEl.textContent = 'Uploading image…';
+  statusEl.className = '';
+
+  try{
+    const compressed = await compressImage(file);
+    const path = `thumbnails/${crypto.randomUUID()}.jpg`;
+    const { error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(path, compressed, { contentType:'image/jpeg', cacheControl:'31536000', upsert:false });
+
+    if(uploadError) throw uploadError;
+
+    const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+    content.images[idx].dataUrl = data.publicUrl;
+
+    const thumbEl = document.getElementById(`thumb-${idx}`);
+    if(thumbEl) thumbEl.innerHTML = `<img src="${data.publicUrl}" alt="Thumbnail ${idx+1}">`;
+
+    statusEl.textContent = 'Image uploaded — click Save changes to publish it.';
+    statusEl.className = 'ok';
+  }catch(err){
+    console.error('Image upload failed:', err);
+    statusEl.textContent = `Image upload failed: ${err.message || 'try again'}`;
+    statusEl.className = 'err';
+  }
+}
+
+function compressImage(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const maxW = 1600;
+        const scale = Math.min(1, maxW / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Could not compress image')), 'image/jpeg', 0.88);
+      };
+      img.onerror = () => reject(new Error('Invalid image file'));
+      img.src = ev.target.result;
+    };
+    reader.onerror = () => reject(new Error('Could not read image'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function syncFormToContent(lang){
+  const L = content[lang];
+  L.availableText = document.getElementById('f-avail').value;
+  L.workLabel = document.getElementById('f-worklabel').value;
+  L.line1 = document.getElementById('f-line1').value;
+  L.line2 = document.getElementById('f-line2').value;
+  L.line3 = document.getElementById('f-line3').value;
+  L.sub = document.getElementById('f-sub').value;
+  L.vwText = document.getElementById('f-vw-text').value;
+  L.vwUrl = document.getElementById('f-vw-url').value;
+  L.hmText = document.getElementById('f-hm-text').value;
+  L.hmUrl = document.getElementById('f-hm-url').value;
+  L.footerName = document.getElementById('f-footer').value;
+}
+
+async function saveContent(){
+  const statusEl = document.getElementById('save-status');
+  syncFormToContent(adminLang);
+  statusEl.textContent = 'Saving…';
+  statusEl.className = '';
+
+  try{
+    const { data: { session } } = await supabase.auth.getSession();
+    if(!session) throw new Error('Your admin session expired. Please log in again.');
+
+    const { error } = await supabase
+      .from('site_content')
+      .upsert({
+        id: CONTENT_ID,
+        content,
+        updated_at: new Date().toISOString()
+      }, { onConflict:'id' });
+
+    if(error) throw error;
+
+    statusEl.textContent = 'Saved ✓';
+    statusEl.className = 'ok';
+    renderMain();
+  }catch(e){
+    console.error('Save failed:', e);
+    statusEl.textContent = `Save failed — ${e.message || 'try again'}`;
+    statusEl.className = 'err';
+  }
+}
+
+function showAdmin(){
+  document.getElementById('main-view').style.display = 'none';
+  document.getElementById('admin-view').style.display = 'block';
+  adminLang = 'en';
+  document.querySelectorAll('.lang-tab').forEach(b => b.classList.toggle('active', b.dataset.lang === 'en'));
+  renderAdminForm();
+}
+function showMain(){
+  document.getElementById('admin-view').style.display = 'none';
+  document.getElementById('main-view').style.display = 'block';
+}
+
+document.getElementById('close-admin').addEventListener('click', showMain);
+
+document.getElementById('lang-toggle').addEventListener('click', () => {
+  currentLang = currentLang === 'en' ? 'ar' : 'en';
+  renderMain();
+});
+
+let themeSpin = 0;
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  themeSpin += 180;
+  const icon = document.getElementById('theme-icon');
+  icon.style.transform = `rotate(${themeSpin}deg)`;
+  icon.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+});
+
+document.querySelectorAll('.lang-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if(btn.dataset.lang === adminLang) return;
+    syncFormToContent(adminLang);
+    adminLang = btn.dataset.lang;
+    document.querySelectorAll('.lang-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAdminForm();
+  });
+});
+
+document.getElementById('save-btn').addEventListener('click', saveContent);
+
+/* ---------- SUPABASE AUTH ---------- */
+function openLoginModal(){
+  if(isAdminAuthenticated){
+    showAdmin();
+    return;
+  }
+
+  document.getElementById('email-input').value = '';
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').textContent = '';
+  document.getElementById('password-modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('email-input').focus(), 50);
+}
+
+async function tryLogin(){
+  const email = document.getElementById('email-input').value.trim();
+  const password = document.getElementById('pw-input').value;
+  const errorEl = document.getElementById('pw-error');
+  const submit = document.getElementById('pw-submit');
+
+  if(!email || !password){
+    errorEl.textContent = 'Enter your admin email and password.';
+    return;
+  }
+
+  submit.disabled = true;
+  errorEl.textContent = 'Signing in…';
+
+  try{
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if(error) throw error;
+
+    isAdminAuthenticated = !!data.session;
+    document.getElementById('password-modal').style.display = 'none';
+    showAdmin();
+  }catch(e){
+    console.error('Login failed:', e);
+    errorEl.textContent = 'Login failed — check your email and password.';
+  }finally{
+    submit.disabled = false;
+  }
+}
+
+document.getElementById('open-admin').addEventListener('click', openLoginModal);
+document.getElementById('pw-submit').addEventListener('click', tryLogin);
+document.getElementById('pw-input').addEventListener('keydown', e => { if(e.key === 'Enter') tryLogin(); });
+document.getElementById('email-input').addEventListener('keydown', e => { if(e.key === 'Enter') tryLogin(); });
+document.getElementById('pw-cancel').addEventListener('click', () => {
+  document.getElementById('password-modal').style.display = 'none';
+});
+
+supabase.auth.onAuthStateChange((_event, session) => {
+  isAdminAuthenticated = !!session;
+});
+
+loadContent();
+</script>
+
+</body>
+</html>
