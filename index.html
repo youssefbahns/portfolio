@@ -44,7 +44,7 @@
   a{ color:inherit; }
 
   body[dir="rtl"]{ font-family:'Tajawal',sans-serif; }
-  body[dir="rtl"] .hero h1, body[dir="rtl"] .logo, body[dir="rtl"] .admin-title,
+  body[dir="rtl"] .hero-h1, body[dir="rtl"] .logo, body[dir="rtl"] .admin-title,
   body[dir="rtl"] .f-left, body[dir="rtl"] .ph-num{ font-family:'Tajawal',sans-serif; font-weight:900; letter-spacing:0; }
 
   nav, footer, .card, .btn-ghost, .admin-link, .img-slot, .field input, .field textarea,
@@ -69,11 +69,34 @@
   #theme-icon{ display:inline-block; transition:transform .5s ease; }
 
   /* ---------- HERO ---------- */
-  .hero{ position:relative; padding:14vh 6vw 12vh; max-width:1100px; }
-  .hero h1{ font-family:'Anton',sans-serif; font-size:clamp(42px, 8vw, 92px); line-height:1.05; text-transform:uppercase; letter-spacing:-1px; }
-  .hero h1 .hl{ position:relative; display:inline-block; color:var(--bg); background:var(--yellow); padding:0 14px; transform:rotate(-1.5deg); margin:4px 0; }
-  .hero p{ margin-top:28px; max-width:520px; font-size:17px; line-height:1.6; color:var(--text-dim); }
-  .cta-row{ margin-top:44px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  .hero{ position:relative; padding:14vh 6vw 12vh; max-width:1200px; }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1fr 400px;
+    grid-template-areas:
+      "title image"
+      "sub image"
+      "cta image";
+    align-items:center;
+    column-gap:48px;
+    row-gap:20px;
+  }
+  .hero-h1{ grid-area:title; font-family:'Anton',sans-serif; font-size:clamp(42px, 8vw, 92px); line-height:1.05; text-transform:uppercase; letter-spacing:-1px; }
+  .hero-h1 .hl{ position:relative; display:inline-block; color:var(--bg); background:var(--yellow); padding:0 14px; transform:rotate(-1.5deg); margin:4px 0; }
+  .hero-sub{ grid-area:sub; font-size:17px; line-height:1.6; color:var(--text-dim); max-width:520px; }
+  .hero-image-wrap{ grid-area:image; width:400px; align-self:center; }
+  .hero-image{ aspect-ratio:4/5; border-radius:16px; overflow:hidden; background:var(--surface); border:1px solid var(--border-soft);
+    transform:rotate(2deg); box-shadow:0 20px 50px rgba(0,0,0,0.25); transition:background-color .35s ease, border-color .35s ease; }
+  .hero-image img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .hero-image.placeholder{ display:flex; align-items:center; justify-content:center;
+    background:repeating-linear-gradient(135deg, var(--surface-2) 0 10px, var(--surface) 10px 20px); }
+  .hero-image .ph-label{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); text-align:center; padding:0 16px; }
+  .cta-row{ grid-area:cta; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  @media (max-width:900px){
+    .hero-grid{ grid-template-columns:1fr; grid-template-areas:"title" "image" "sub" "cta"; row-gap:24px; }
+    .hero-image-wrap{ width:100%; display:flex; justify-content:center; }
+    .hero-image{ width:440px; max-width:100%; }
+  }
   .btn{ font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; text-decoration:none; padding:14px 26px; border-radius:100px;
     display:inline-flex; align-items:center; gap:8px; transition:transform .18s ease, background .18s ease; border:none; cursor:pointer; }
   .btn-primary{ background:var(--yellow); color:#0a0a0c; }
@@ -164,8 +187,12 @@
   .a-section h3{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--yellow); margin-bottom:18px; }
   .field{ margin-bottom:16px; }
   .field label{ display:block; font-size:12px; color:var(--text-dim); margin-bottom:6px; font-family:'JetBrains Mono',monospace; }
-  .field input[type=text], .field input[type=url], .field textarea{ width:100%; background:var(--surface); border:1px solid var(--border-soft);
+  .field input[type=text], .field input[type=url], .field input[type=number], .field textarea{ width:100%; background:var(--surface); border:1px solid var(--border-soft);
     color:var(--text); padding:12px 14px; border-radius:6px; font-family:'Inter',sans-serif; font-size:14px; resize:vertical; }
+  .field select{ width:100%; background:var(--surface); border:1px solid var(--border-soft); color:var(--text); padding:12px 14px;
+    border-radius:6px; font-family:'Inter',sans-serif; font-size:14px; }
+  .field-checkbox{ display:flex; align-items:center; gap:10px; font-size:14px; }
+  .field-checkbox input{ width:16px; height:16px; }
   .field input:focus, .field textarea:focus{ outline:none; border-color:var(--yellow); }
   .row2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
   @media (max-width:640px){ .row2{ grid-template-columns:1fr; } }
@@ -188,6 +215,43 @@
   #save-status{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); }
   #save-status.ok{ color:#3ddc84; }
   #save-status.err{ color:var(--red); }
+
+  /* ---------- PROMO POPUP ---------- */
+  .popup-overlay{ z-index:400; }
+  .popup-overlay.open{ display:flex; }
+  .popup-card{ position:relative; background:var(--surface); border:1px solid var(--border-med); border-radius:14px; padding:32px;
+    width:420px; max-width:90vw; text-align:center; animation:lb-in .35s ease; max-height:88vh; overflow-y:auto; }
+  .popup-close{ position:absolute; top:12px; right:12px; width:34px; height:34px; border-radius:50%;
+    background:rgba(0,0,0,0.6); border:1.5px solid rgba(255,255,255,0.55); color:#ffffff; font-size:20px;
+    cursor:pointer; transition:background .2s ease, transform .2s ease; display:flex; align-items:center; justify-content:center;
+    backdrop-filter:blur(3px); z-index:2; }
+  .popup-close:hover{ background:rgba(0,0,0,0.8); transform:rotate(90deg); }
+  .popup-media{ position:relative; margin-top:26px; margin-bottom:18px; border-radius:8px; overflow:hidden; }
+  .popup-media img{ width:100%; display:block; }
+  .popup-video-wrap{ position:relative; width:100%; padding-top:56.25%; }
+  .popup-video-wrap iframe, .popup-video-wrap video{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+  #popup-title{ font-family:'Anton',sans-serif; font-size:22px; text-transform:uppercase; margin-bottom:10px; letter-spacing:0.3px; }
+  #popup-body{ font-size:14px; color:var(--text-dim); line-height:1.6; }
+
+
+
+
+/* Hero image: slightly right + responsive sizing */
+@media (min-width: 901px){
+  .hero-image-wrap{
+    transform: translateX(28px);
+    width: min(400px, 28vw);
+    max-width: 400px;
+  }
+}
+@media (max-width: 900px){
+  .hero-image-wrap{
+    width: min(400px, 82vw);
+    max-width: 400px;
+    transform: none;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -205,12 +269,16 @@
   </nav>
 
   <section class="hero">
-    <h1 id="hero-h1"></h1>
-    <p id="hero-sub"></p>
-
-    <div class="cta-row">
-      <a href="#work" class="btn btn-primary" id="btn-view-work">View the work ↓</a>
-      <a href="#" class="btn btn-ghost" id="btn-hire-me">Hire me on Fiverr</a>
+    <div class="hero-grid">
+      <h1 id="hero-h1" class="hero-h1"></h1>
+      <div class="hero-image-wrap">
+        <div class="hero-image placeholder" id="hero-image-box"></div>
+      </div>
+      <p id="hero-sub" class="hero-sub"></p>
+      <div class="cta-row">
+        <a href="#work" class="btn btn-primary" id="btn-view-work">View the work ↓</a>
+        <a href="#" class="btn btn-ghost" id="btn-hire-me">Hire me on Khamsat</a>
+      </div>
     </div>
   </section>
 
@@ -239,6 +307,16 @@
   <div class="lb-tag" id="lightbox-tag"></div>
 </div>
 
+<!-- ================= PROMO POPUP ================= -->
+<div class="modal-overlay popup-overlay" id="promo-popup">
+  <div class="popup-card">
+    <button class="popup-close" id="popup-close">&times;</button>
+    <div class="popup-media" id="popup-media"></div>
+    <h3 id="popup-title"></h3>
+    <p id="popup-body"></p>
+  </div>
+</div>
+
 <!-- ================= ADMIN VIEW ================= -->
 <div id="admin-view">
   <div class="admin-header">
@@ -257,6 +335,18 @@
       <div class="row2">
         <div class="field"><label>"Available" badge text</label><input type="text" id="f-avail"></div>
         <div class="field"><label>"Selected Work" section title</label><input type="text" id="f-worklabel"></div>
+      </div>
+    </div>
+
+    <div class="a-section">
+      <h3>Hero photo (shown next to the headline)</h3>
+      <div class="img-slot">
+        <div class="thumb" id="hero-photo-thumb">—</div>
+        <div class="slot-fields">
+          <label class="upload-btn" for="hero-photo-input">⤴ Upload photo</label>
+          <input type="file" accept="image/*" id="hero-photo-input" class="visually-hidden">
+        </div>
+        <button class="clear-btn" id="hero-photo-clear">Remove</button>
       </div>
     </div>
 
@@ -289,6 +379,51 @@
       <h3>Thumbnails — images are shared across languages, tags are per-language</h3>
       <div id="img-slots"></div>
       <button class="admin-link" id="add-slot-btn">+ Add image slot</button>
+    </div>
+
+    <div class="a-section">
+      <h3>Promo popup (shown to visitors)</h3>
+      <div class="field field-checkbox">
+        <input type="checkbox" id="f-popup-enabled">
+        <label for="f-popup-enabled" style="margin:0;">Enable popup for visitors</label>
+      </div>
+      <div class="field"><label>Popup title (this language)</label><input type="text" id="f-popup-title"></div>
+      <div class="field"><label>Popup text (this language)</label><textarea id="f-popup-body" rows="3"></textarea></div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Popup image</label>
+          <div class="img-slot">
+            <div class="thumb" id="popup-thumb">—</div>
+            <div class="slot-fields">
+              <label class="upload-btn" for="popup-file-input">⤴ Upload image</label>
+              <input type="file" accept="image/*" id="popup-file-input" class="visually-hidden">
+            </div>
+            <button class="clear-btn" id="popup-img-clear">Remove</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Or video URL (YouTube link or direct .mp4)</label>
+          <input type="text" id="f-popup-video" placeholder="https://youtube.com/watch?v=...">
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field"><label>Auto-close after (seconds — 0 means stay until closed)</label><input type="number" id="f-popup-duration" placeholder="0" min="0"></div>
+        <div class="field"><label>Max times shown to the same visitor</label><input type="number" id="f-popup-maxshows" placeholder="3" min="1"></div>
+      </div>
+
+      <div class="field">
+        <label>Show again</label>
+        <select id="f-popup-frequency">
+          <option value="every_refresh">Every time the page loads / is refreshed</option>
+          <option value="time_interval">Only once every X hours</option>
+        </select>
+      </div>
+      <div class="field" id="popup-interval-field">
+        <label>Hours between shows</label>
+        <input type="number" id="f-popup-interval" placeholder="24" min="1">
+      </div>
     </div>
   </div>
 
@@ -342,7 +477,7 @@ const DEFAULTS = {
     sub: "I'm Youssef Mohamed — I design high-CTR YouTube thumbnails for creators who want more clicks without more clutter.",
     vwText: 'View the work ↓',
     vwUrl: '#work',
-    hmText: 'Hire me on Fiverr',
+    hmText: 'Hire me on Khamsat',
     hmUrl: '#',
     footerName: 'Youssef Mohamed — Thumbnail Designer',
     workLabel: 'Selected Work',
@@ -355,11 +490,23 @@ const DEFAULTS = {
     sub: 'أنا يوسف محمد، بصمم Thumbnails بنسبة ضغط عالية لليوتيوبرز اللي عايزين مشاهدات أكتر من غير تعقيد.',
     vwText: 'شوف الأعمال ↓',
     vwUrl: '#work',
-    hmText: 'وظفني على Fiverr',
+    hmText: 'وظفني على خمسات',
     hmUrl: '#',
     footerName: 'يوسف محمد — مصمم Thumbnails',
     workLabel: 'أعمال مختارة',
     availableText: 'متاح للعمل'
+  },
+  heroImage: { dataUrl: null },
+  popup: {
+    enabled: false,
+    image: null,
+    videoUrl: '',
+    durationSeconds: 0,
+    maxShowsPerVisitor: 3,
+    frequencyMode: 'every_refresh',
+    intervalHours: 24,
+    en: { title: 'Got a video coming up?', body: "I design thumbnails that get more clicks — let's talk about your next upload." },
+    ar: { title: 'عندك فيديو جاي؟', body: 'بصمملك Thumbnail يجيب ضغط أكتر — يلا نتكلم عن الفيديو الجاي.' }
   },
   images: Array.from({length: 9}, () => ({ dataUrl: null, tag: { en:'', ar:'' } }))
 };
@@ -369,9 +516,13 @@ let currentLang = 'en';
 let adminLang = 'en';
 let lockoutState = { attempts: 0, lockedUntil: 0 };
 let lockoutInterval = null;
-let isAdminAuthenticated = false;
+// --- TEMP: set to true to bring back the email/password login requirement for Admin ---
+const REQUIRE_LOGIN = false;
+
+let isAdminAuthenticated = !REQUIRE_LOGIN;
 let lightboxImages = [];
 let lightboxIndex = 0;
+let popupAutoCloseTimer = null;
 
 function deepMerge(base, saved){
   const out = JSON.parse(JSON.stringify(base));
@@ -382,6 +533,17 @@ function deepMerge(base, saved){
       dataUrl: s && s.dataUrl ? s.dataUrl : null,
       tag: { en: s?.tag?.en ?? '', ar: s?.tag?.ar ?? '' }
     }));
+  }
+  if(saved.heroImage){
+    out.heroImage = { dataUrl: saved.heroImage.dataUrl ?? null };
+  }
+  if(saved.popup){
+    out.popup = {
+      ...out.popup,
+      ...saved.popup,
+      en: { ...out.popup.en, ...(saved.popup.en || {}) },
+      ar: { ...out.popup.ar, ...(saved.popup.ar || {}) }
+    };
   }
   return out;
 }
@@ -414,11 +576,13 @@ async function loadContent(){
     console.error('Could not load site content:', e);
   }
 
-  try{
-    const { data: { session } } = await supabase.auth.getSession();
-    isAdminAuthenticated = !!session;
-  }catch(e){
-    console.error('Could not read Supabase session:', e);
+  if(REQUIRE_LOGIN){
+    try{
+      const { data: { session } } = await supabase.auth.getSession();
+      isAdminAuthenticated = !!session;
+    }catch(e){
+      console.error('Could not read Supabase session:', e);
+    }
   }
 }
 
@@ -439,6 +603,18 @@ function renderMain(){
 
   document.getElementById('footer-name').textContent = L.footerName;
   document.getElementById('lang-toggle').textContent = currentLang === 'en' ? 'عربي' : 'English';
+
+  const heroBox = document.getElementById('hero-image-box');
+  if(content.heroImage && content.heroImage.dataUrl){
+    heroBox.className = 'hero-image';
+    heroBox.innerHTML = `<img src="${content.heroImage.dataUrl}" alt="Youssef Mohamed">`;
+  } else {
+    heroBox.className = 'hero-image placeholder';
+    const phText = currentLang === 'ar' ? 'ضيف صورتك من الأدمن' : 'Add your photo in Admin';
+    heroBox.innerHTML = `<div class="ph-label">${phText}</div>`;
+  }
+
+  refreshPopupTextIfOpen();
 
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
@@ -468,6 +644,7 @@ function openLightbox(idx){
   lightboxIndex = idx;
   updateLightbox();
   document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 function updateLightbox(){
   const item = lightboxImages[lightboxIndex];
@@ -479,7 +656,7 @@ function updateLightbox(){
   document.getElementById('lb-prev').style.display = multi ? 'flex' : 'none';
   document.getElementById('lb-next').style.display = multi ? 'flex' : 'none';
 }
-function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
 function nextImage(){ lightboxIndex = (lightboxIndex + 1) % lightboxImages.length; updateLightbox(); }
 function prevImage(){ lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length; updateLightbox(); }
 
@@ -492,6 +669,119 @@ document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape') closeLightbox();
   if(e.key === 'ArrowRight') nextImage();
   if(e.key === 'ArrowLeft') prevImage();
+});
+
+/* ---------- PROMO POPUP ---------- */
+function getPopupState(){
+  try{
+    const raw = localStorage.getItem('promo-popup-state');
+    return raw ? JSON.parse(raw) : { shows: 0, lastShown: 0 };
+  }catch(e){ return { shows: 0, lastShown: 0 }; }
+}
+function savePopupState(state){
+  try{ localStorage.setItem('promo-popup-state', JSON.stringify(state)); }catch(e){ /* ignore */ }
+}
+
+function extractYouTubeId(url){
+  const patterns = [
+    /youtube\.com\/watch\?v=([^&]+)/,
+    /youtu\.be\/([^?&]+)/,
+    /youtube\.com\/embed\/([^?&]+)/,
+    /youtube\.com\/shorts\/([^?&]+)/
+  ];
+  for(const p of patterns){
+    const m = url.match(p);
+    if(m) return m[1];
+  }
+  return '';
+}
+
+function buildVideoEmbed(url){
+  const wrap = document.createElement('div');
+  wrap.className = 'popup-video-wrap';
+  if(/youtu\.?be/.test(url)){
+    const id = extractYouTubeId(url);
+    wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+  } else if(/\.(mp4|webm|ogg)$/i.test(url)){
+    wrap.innerHTML = `<video src="${url}" controls autoplay muted playsinline></video>`;
+  } else {
+    wrap.innerHTML = `<iframe src="${url}" allowfullscreen></iframe>`;
+  }
+  return wrap;
+}
+
+function renderPopupText(){
+  const cfg = content.popup;
+  if(!cfg) return;
+  const L = cfg[currentLang] || { title:'', body:'' };
+  document.getElementById('popup-title').textContent = L.title;
+  document.getElementById('popup-body').textContent = L.body;
+}
+function refreshPopupTextIfOpen(){
+  if(document.getElementById('promo-popup').classList.contains('open')) renderPopupText();
+}
+
+function showPopup(){
+  const cfg = content.popup;
+  renderPopupText();
+
+  const mediaEl = document.getElementById('popup-media');
+  mediaEl.innerHTML = '';
+  let hasMedia = false;
+
+  if(cfg.image){
+    const img = document.createElement('img');
+    img.src = cfg.image;
+    mediaEl.appendChild(img);
+    hasMedia = true;
+  } else if(cfg.videoUrl){
+    mediaEl.appendChild(buildVideoEmbed(cfg.videoUrl));
+    hasMedia = true;
+  }
+  mediaEl.style.display = hasMedia ? 'block' : 'none';
+
+  document.getElementById('promo-popup').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  clearTimeout(popupAutoCloseTimer);
+  if(cfg.durationSeconds > 0){
+    popupAutoCloseTimer = setTimeout(closePopup, cfg.durationSeconds * 1000);
+  }
+}
+function closePopup(){
+  document.getElementById('promo-popup').classList.remove('open');
+  document.body.style.overflow = document.getElementById('lightbox').classList.contains('open') ? 'hidden' : '';
+  clearTimeout(popupAutoCloseTimer);
+}
+
+function maybeShowPopup(){
+  const cfg = content.popup;
+  if(!cfg || !cfg.enabled) return;
+  if(!cfg.image && !cfg.videoUrl && !cfg[currentLang]?.title && !cfg[currentLang]?.body) return;
+
+  const state = getPopupState();
+  const maxShows = cfg.maxShowsPerVisitor || Infinity;
+  if(state.shows >= maxShows) return;
+
+  if(cfg.frequencyMode === 'time_interval'){
+    const intervalMs = (cfg.intervalHours || 24) * 3600 * 1000;
+    if(state.lastShown && Date.now() - state.lastShown < intervalMs) return;
+  }
+
+  showPopup();
+  state.shows += 1;
+  state.lastShown = Date.now();
+  savePopupState(state);
+}
+
+document.getElementById('popup-close').addEventListener('click', closePopup);
+document.getElementById('promo-popup').addEventListener('click', (e) => { if(e.target.id === 'promo-popup') closePopup(); });
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && document.getElementById('promo-popup').classList.contains('open')) closePopup();
+});
+
+document.getElementById('f-popup-frequency').addEventListener('change', (e) => {
+  document.getElementById('popup-interval-field').style.display = e.target.value === 'time_interval' ? 'block' : 'none';
 });
 
 /* ---------- ADMIN FORM ---------- */
@@ -508,6 +798,24 @@ function renderAdminForm(){
   document.getElementById('f-hm-text').value = L.hmText;
   document.getElementById('f-hm-url').value = L.hmUrl;
   document.getElementById('f-footer').value = L.footerName;
+
+  const heroThumb = document.getElementById('hero-photo-thumb');
+  heroThumb.innerHTML = content.heroImage && content.heroImage.dataUrl
+    ? `<img src="${content.heroImage.dataUrl}" alt="Hero photo">`
+    : '—';
+
+  const pop = content.popup;
+  const popL = pop[adminLang];
+  document.getElementById('f-popup-enabled').checked = !!pop.enabled;
+  document.getElementById('f-popup-title').value = popL.title;
+  document.getElementById('f-popup-body').value = popL.body;
+  document.getElementById('f-popup-video').value = pop.videoUrl || '';
+  document.getElementById('f-popup-duration').value = pop.durationSeconds || 0;
+  document.getElementById('f-popup-maxshows').value = pop.maxShowsPerVisitor || 3;
+  document.getElementById('f-popup-frequency').value = pop.frequencyMode || 'every_refresh';
+  document.getElementById('f-popup-interval').value = pop.intervalHours || 24;
+  document.getElementById('popup-interval-field').style.display = pop.frequencyMode === 'time_interval' ? 'block' : 'none';
+  document.getElementById('popup-thumb').innerHTML = pop.image ? `<img src="${pop.image}" alt="Popup image">` : '—';
 
   const wrap = document.getElementById('img-slots');
   wrap.innerHTML = '';
@@ -542,6 +850,82 @@ document.getElementById('add-slot-btn').addEventListener('click', () => {
   renderAdminForm();
 });
 
+async function uploadToSupabase(file, statusEl){
+  if(!supabaseReady) throw new Error('Supabase is not available. Please refresh the page.');
+  if(REQUIRE_LOGIN){
+    const { data: { session } } = await supabase.auth.getSession();
+    if(!session){
+      statusEl.textContent = 'Please log in again to upload images.';
+      statusEl.className = 'err';
+      return null;
+    }
+  }
+  statusEl.textContent = 'Uploading image…';
+  statusEl.className = '';
+  const compressed = await compressImage(file);
+  const path = `thumbnails/${crypto.randomUUID()}.jpg`;
+  const { error: uploadError } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .upload(path, compressed, { contentType:'image/jpeg', cacheControl:'31536000', upsert:false });
+  if(uploadError) throw uploadError;
+  const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
+document.getElementById('hero-photo-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const statusEl = document.getElementById('save-status');
+  try{
+    const url = await uploadToSupabase(file, statusEl);
+    if(!url) return;
+    content.heroImage.dataUrl = url;
+    document.getElementById('hero-photo-thumb').innerHTML = `<img src="${url}" alt="Hero photo">`;
+    statusEl.textContent = 'Photo uploaded — click Save changes to publish it.';
+    statusEl.className = 'ok';
+  }catch(err){
+    console.error('Hero photo upload failed:', err);
+    statusEl.textContent = `Upload failed: ${err.message || 'try again'}`;
+    statusEl.className = 'err';
+  }
+});
+document.getElementById('hero-photo-clear').addEventListener('click', () => {
+  content.heroImage.dataUrl = null;
+  document.getElementById('hero-photo-thumb').innerHTML = '—';
+});
+
+document.getElementById('popup-file-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const statusEl = document.getElementById('save-status');
+  try{
+    const url = await uploadToSupabase(file, statusEl);
+    if(!url) return;
+    content.popup.image = url;
+    content.popup.videoUrl = '';
+    document.getElementById('f-popup-video').value = '';
+    document.getElementById('popup-thumb').innerHTML = `<img src="${url}" alt="Popup image">`;
+    statusEl.textContent = 'Popup image uploaded (video URL cleared) — click Save changes to publish it.';
+    statusEl.className = 'ok';
+  }catch(err){
+    console.error('Popup image upload failed:', err);
+    statusEl.textContent = `Upload failed: ${err.message || 'try again'}`;
+    statusEl.className = 'err';
+  }
+});
+document.getElementById('popup-img-clear').addEventListener('click', () => {
+  content.popup.image = null;
+  document.getElementById('popup-thumb').innerHTML = '—';
+});
+document.getElementById('f-popup-video').addEventListener('change', (e) => {
+  if(e.target.value.trim()){
+    content.popup.image = null;
+    document.getElementById('popup-thumb').innerHTML = '—';
+    document.getElementById('save-status').textContent = 'Video URL set — popup image cleared (only one can be used).';
+    document.getElementById('save-status').className = '';
+  }
+});
+
 async function handleFile(e, idx){
   const file = e.target.files[0];
   if(!file) return;
@@ -550,11 +934,13 @@ async function handleFile(e, idx){
     throw new Error('Supabase is not available. Please refresh the page.');
   }
 
-  const { data: { session } } = await supabase.auth.getSession();
-  if(!session){
-    document.getElementById('save-status').textContent = 'Please log in again to upload images.';
-    document.getElementById('save-status').className = 'err';
-    return;
+  if(REQUIRE_LOGIN){
+    const { data: { session } } = await supabase.auth.getSession();
+    if(!session){
+      document.getElementById('save-status').textContent = 'Please log in again to upload images.';
+      document.getElementById('save-status').className = 'err';
+      return;
+    }
   }
 
   const statusEl = document.getElementById('save-status');
@@ -621,6 +1007,19 @@ function syncFormToContent(lang){
   L.hmText = document.getElementById('f-hm-text').value;
   L.hmUrl = document.getElementById('f-hm-url').value;
   L.footerName = document.getElementById('f-footer').value;
+
+  content.popup[lang].title = document.getElementById('f-popup-title').value;
+  content.popup[lang].body = document.getElementById('f-popup-body').value;
+  content.popup.enabled = document.getElementById('f-popup-enabled').checked;
+  content.popup.videoUrl = document.getElementById('f-popup-video').value;
+  if(content.popup.videoUrl.trim() && content.popup.image){
+    content.popup.image = null;
+    document.getElementById('popup-thumb').innerHTML = '—';
+  }
+  content.popup.durationSeconds = parseInt(document.getElementById('f-popup-duration').value, 10) || 0;
+  content.popup.maxShowsPerVisitor = parseInt(document.getElementById('f-popup-maxshows').value, 10) || 3;
+  content.popup.frequencyMode = document.getElementById('f-popup-frequency').value;
+  content.popup.intervalHours = parseInt(document.getElementById('f-popup-interval').value, 10) || 24;
 }
 
 async function saveContent(){
@@ -631,8 +1030,10 @@ async function saveContent(){
 
   try{
     if(!supabaseReady) throw new Error('Supabase is not available. Please refresh the page.');
-    const { data: { session } } = await supabase.auth.getSession();
-    if(!session) throw new Error('Your admin session expired. Please log in again.');
+    if(REQUIRE_LOGIN){
+      const { data: { session } } = await supabase.auth.getSession();
+      if(!session) throw new Error('Your admin session expired. Please log in again.');
+    }
 
     const { error } = await supabase
       .from('site_content')
@@ -751,13 +1152,15 @@ document.getElementById('pw-cancel').addEventListener('click', () => {
   document.getElementById('password-modal').style.display = 'none';
 });
 
-if(supabaseReady){
+if(supabaseReady && REQUIRE_LOGIN){
   supabase.auth.onAuthStateChange((_event, session) => {
     isAdminAuthenticated = !!session;
   });
 }
 
-loadContent();
+loadContent().then(() => {
+  setTimeout(maybeShowPopup, 900);
+});
 </script>
 
 </body>
